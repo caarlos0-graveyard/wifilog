@@ -7,14 +7,19 @@ import (
 	"github.com/caarlos0/wifilog/wifi"
 )
 
-func main() {
-	f, err := os.OpenFile("connections.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+func openLogFile() *os.File {
+	file, err := os.OpenFile("connections.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	defer f.Close()
+	return file
+}
 
-	log.SetOutput(f)
+func main() {
+	file := openLogFile()
+	defer file.Close()
+	log.SetOutput(file)
+
 	ssid, err := wifi.New().SSID()
 	if err != nil {
 		log.Fatalln(err)
